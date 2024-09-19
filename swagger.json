@@ -1,0 +1,431 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Danh sách các API để làm việc với Front End",
+    "version": "1.0.0",
+    "title": "API CỦA LIFE UNI"
+  },
+  "host": "localhost:8000",
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "User",
+      "description": "Module người dùng"
+    },
+    {
+      "name": "Auth",
+      "description": "Module xác thực người dùng"
+    }
+  ],
+  "schemes": ["http"],
+  "paths": {
+    "/users/": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Tạo người dùng mới",
+        "description": "",
+        "operationId": "createUsersWithListInput",
+        "consumes": ["application/json"],
+        "produces": ["application/json", "application/xml"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Thông tin của User cần thêm mới",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Tạo user thành công",
+            "schema": { "$ref": "#/definitions/User" }
+          },
+          "500": {
+            "description": "User đã tồn tại trên hệ thống"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Lấy danh sách tất cả người dùng",
+        "description": "",
+        "produces": ["application/json", "application/xml"],
+        "responses": {
+          "200": {
+            "description": "Lấy danh sách thành công",
+            "schema": { "$ref": "#/definitions/User" }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Lấy thông tin người dùng qua id",
+        "description": "",
+        "produces": ["application/json", "application/xml"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Nhập id của User cần lấy thông tin",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thực thi thành công",
+            "schema": { "$ref": "#/definitions/User" }
+          },
+          "404": { "description": "Không tìm thấy user!" }
+        }
+      },
+      "put": {
+        "tags": ["User"],
+        "summary": "Cập nhật thông tin người dùng",
+        "description": "Chỉ thực hiện với người có role là \"admin\"",
+        "operationId": "updateUser",
+        "consumes": ["application/json"],
+        "produces": ["application/json", "application/xml"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Nhập id của User cần cập nhật",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Gửi thông tin người dùng cần cập nhật",
+            "required": true,
+            "schema": { "$ref": "#/definitions/User" }
+          }
+        ],
+        "responses": {
+          "500": { "description": "không tìm thấy User" }
+        }
+      },
+      "delete": {
+        "tags": ["User"],
+        "summary": "Xóa người dùng qua id",
+        "description": "Điều này chỉ thực hiện với người dùng có quyền admin.",
+        "operationId": "deleteUser",
+        "produces": ["application/json", "application/xml"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID của user cần xóa",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "500": { "description": "Không tìm thấy User" }
+        }
+      }
+    },
+    "/users/upload-avatar": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Upload avatar người dùng",
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "headers",
+            "description": "accessToken",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "avatar",
+            "in": "formData",
+            "description": "Hình ảnh",
+            "required": false,
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Upload thành công!"
+          },
+          "400": {
+            "description": "Không hợp lệ!"
+          }
+        }
+      }
+    },
+    "users//delete-avatar": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Xóa avatar người dùng",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "description": "accessToken",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "filename",
+            "in": "body",
+            "description": "Gửi tên file",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Xóa thành công!"
+          },
+          "404": {
+            "description": "Không xóa được!"
+          }
+        }
+      }
+    },
+    "/auth/sign-in": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Đăng nhập",
+        "description": "",
+        "operationId": "loginUser",
+        "produces": ["application/json", "application/xml"],
+        "parameters": [
+          {
+            "name": "Thông tin đăng nhập",
+            "in": "body",
+            "description": "Email và mật khẩu để đăng nhập",
+            "required": true,
+            "type": "string",
+            "schema": {
+              "example": {
+                "email": "vomanhdat10998@gmail.com",
+                "password": "manhdat"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đăng nhập thành công",
+            "headers": {
+              "X-Expires-After": {
+                "type": "string",
+                "format": "date-time",
+                "description": "date in UTC when token expires"
+              },
+              "X-Rate-Limit": {
+                "type": "integer",
+                "format": "int32",
+                "description": "calls per hour allowed by the user"
+              }
+            },
+            "schema": { "type": "string" }
+          },
+          "403": { "description": "Sai mật khẩu" },
+          "400": { "description": "Mật khẩu hoặc tài khoản không đúng!" }
+        }
+      }
+    },
+    "/auth/sign-up": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Đăng ký",
+        "description": "",
+        "operationId": "signUpUser",
+        "produces": ["application/json", "application/xml"],
+        "parameters": [
+          {
+            "name": "Thông tin đăng ký",
+            "in": "body",
+            "description": "Gửi thông tin người dùng dăng ký",
+            "required": true,
+            "type": "string",
+            "schema": {
+              "example": {
+                "name": "Mạnh Đạt Võ",
+                "email": "vomanhdat10998@gmail.com",
+                "gender": "nam",
+                "phone": "0987678654",
+                "birthDay": "12/13/1998",
+                "avatar": "avatar.png",
+                "password": "123456"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đăng ký thành công"
+          },
+          "400": { "description": "Email đã tồn tại trên hệ thống" }
+        }
+      }
+    },
+    "/auth/change-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Đổi mật khẩu",
+        "description": "",
+        "operationId": "changePassword",
+        "produces": ["application/json", "application/xml"],
+        "parameters": [
+          {
+            "name": "Data",
+            "in": "body",
+            "description": "Gửi mật khẩu",
+            "required": true,
+            "type": "string",
+            "schema": {
+              "example": {
+                "id": "60e6beddbeefa54ff879b36a",
+                "newPassword": "123456@",
+                "oldPassword": "manhdat10998@"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đổi mật khẩu thành công",
+            "schema": { "type": "string" }
+          },
+          "400": { "description": "Không tìm thấy người dùng" }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Quên mật khẩu (tạo Token)",
+        "description": "",
+        "operationId": "forgotPassword",
+        "produces": ["application/json", "application/xml"],
+        "parameters": [
+          {
+            "name": "Data",
+            "in": "body",
+            "description": "Gửi Email",
+            "required": true,
+            "type": "string",
+            "schema": {
+              "example": {
+                "email": "vomanhdat10998@gmail.com"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thành công"
+          },
+          "400": { "description": "Email không tồn tại" }
+        }
+      }
+    },
+    "/auth/verify-forgot-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Quên mật khẩu (Xác thực Token)",
+        "description": "",
+        "operationId": "verifyForgotPassword",
+        "produces": ["application/json", "application/xml"],
+        "parameters": [
+          {
+            "name": "password",
+            "in": "body",
+            "description": "Gửi mật khẩu mới",
+            "required": true,
+            "type": "string",
+            "schema": {
+              "example": {
+                "password": "123456789"
+              }
+            }
+          },
+          {
+            "name": "token",
+            "in": "headers",
+            "description": "accessToken",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đổi mật khẩu thành công!!!"
+          },
+          "400": { "description": "Error Occur" }
+        }
+      }
+    },
+    "/auth/verify-sign-up": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Đăng ký (Xác thực OTP)",
+        "description": "",
+        "operationId": "verifySignUp",
+        "produces": ["application/json", "application/xml"],
+        "parameters": [
+          {
+            "name": "otp",
+            "in": "body",
+            "description": "Gửi OTP",
+            "required": true,
+            "type": "string",
+            "schema": {
+              "example": {
+                "otp": "141500"
+              }
+            }
+          },
+          {
+            "name": "token",
+            "in": "headers",
+            "description": "accessToken",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Đăng ký thành công"
+          },
+          "403": { "description": "Nhập sai OTP" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "password": { "type": "string" },
+        "phone": { "type": "string" },
+        "avatar": { "type": "string" },
+        "birthDay": { "type": "string", "format": "date-time" },
+        "role": { "type": "string" }
+      },
+      "xml": { "name": "User" }
+    }
+  },
+  "externalDocs": {
+    "description": "URL FRONTEND",
+    "url": "https://lpe-ver2.vercel.app/"
+  }
+}
