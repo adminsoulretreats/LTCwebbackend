@@ -12,7 +12,7 @@ async function connect() {
 
     console.log("Kết nối thành công đến database");
   } catch (error) {
-    console.log("Kết nối thất bại đến database");
+    console.log("Kết nối thất bại đến database : ", error);
   }
 }
 
